@@ -6,10 +6,10 @@ from flask import Flask, jsonify, g, request, make_response
 from distutils.util import strtobool
 
 app = Flask(__name__)
-logging.basicConfig(filename='data/log/flask.log', level=logging.DEBUG)
+logging.basicConfig(filename=os.getenv('FLASK_LOG', 'data/log/flask.log'), level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-DATABASE = 'data/db/test.db'
+DATABASE = os.getenv('DATABASE', 'data/db/test.db')
 
 #======DB Start
 def get_db():
