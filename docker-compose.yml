@@ -1,13 +1,12 @@
 version: "3"
 
 services:
-  eds-app:
-    image: flask_image
-    container_name: flask_image
-    restart: always
+  web:
+    build: .
     ports:
       - "8888:8888"
     volumes:
-      - ./data/log:/code/log
+      - ./data/log:/code/data/log
+      - ./data/db:/code/data/db
     environment:
       - FLASK_DEBUG=True

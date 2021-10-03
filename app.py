@@ -10,6 +10,5 @@ def hello():
     return "Hello World!"
 
 if __name__ == "__main__":
-    logging.basicConfig(filename='log/flask.log', level=logging.DEBUG)
-
+    logging.basicConfig(filename='data/log/flask.log', level=logging.DEBUG)
     app.run(debug=strtobool(os.getenv('FLASK_DEBUG', True)), host='0.0.0.0', port=8888)
