@@ -12,7 +12,10 @@ logger = logging.getLogger(__name__)
 
 #======DB Start
 def get_db():
-    DATABASE = os.getenv('DATABASE', 'data/db/test.db')
+    if strtobool(os.getenv('UNIT_TEST', 'False')):
+        DATABASE = 'data/db/unittest.db'
+    else:
+        DATABASE = os.getenv('DATABASE', 'data/db/test.db')
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
@@ -21,8 +24,12 @@ def get_db():
 def init_db():
     db = get_db()
     with app.open_resource('schema.sql') as f:
-        db.execute(f.read().decode('utf8'))
-    logger.info("SUCCESS create DB!")
+        try:
+            db.execute(f.read().decode('utf8'))
+        except OperationalError as e:
+            logger.warning(e)
+        else:
+            logger.info("SUCCESS create DB!")
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -163,8 +170,5 @@ def hello():
 
 if __name__ == "__main__":
     with app.app_context():
-        try:
-            init_db()
-        except OperationalError as e:
-            logger.warning(e)
+        init_db()
     app.run(debug=strtobool(os.getenv('FLASK_DEBUG', 'True')), host='0.0.0.0', port=8888)
