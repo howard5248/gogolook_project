@@ -121,7 +121,7 @@ def update_task():
     if not id:
         logger.error("Error Update Task! ID can not be None!")
         resp = make_response("The ID can not be None!", 400)
-    elif not name and not status:
+    elif not name and status == None:
         logger.error("Error Update Task! name and status can not be both None!")
         resp = make_response("The name and status can not be both None!", 400)
     elif not query_db('select * from Table1 where id = ?;', args=[id], one=True):

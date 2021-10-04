@@ -66,9 +66,9 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(len(response_data['result']), count)
 
     def test_update(self):
-        put_datas = [{'id': 1, 'name':'this_is_puttest', 'status':1},
-                     {'id': 1,'name':'this_is_puttest2', 'status':0},
-                      {'id': 1, 'status':1},
+        put_datas = [{'id': 1, 'name':'this_is_puttest', 'status':0},
+                     {'id': 1,'name':'this_is_puttest2', 'status':1},
+                      {'id': 1, 'status':0},
                       {'id': 1, 'name':'this_is_puttest3'},
                       {'id': 1, 'name':'this_is_test3', 'status':2}, # 400
                       {'id': 0, 'name':'this_is_test3', 'status':1}, # 400
