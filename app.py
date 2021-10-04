@@ -50,8 +50,15 @@ def insert_db(name, status=0):
 def update_db(id, name, status):
     db = get_db()
     cur = db.cursor()
-    statement = "UPDATE Table1 SET name = ?, status = ? WHERE id = ?"
-    cur.execute(statement, [name, status, id])
+    if name == None:
+        statement = "UPDATE Table1 SET status = ? WHERE id = ?"
+        cur.execute(statement, [status, id])
+    elif status == None:
+        statement = "UPDATE Table1 SET name = ? WHERE id = ?"
+        cur.execute(statement, [name, id])
+    else:
+        statement = "UPDATE Table1 SET name = ?, status = ? WHERE id = ?"
+        cur.execute(statement, [name, status, id])
     db.commit()
     cur.close()
     return True
@@ -104,15 +111,18 @@ def update_task():
     status = details.get('status', None)
     id = details.get('id', None)
     logger.info("Update Task ID[%s], Name[%s], Status[%s]" % (id, name, status))
-    if not (id and name and status != None):
-        logger.error("Error Update Task! ID, name, status can not be None!")
-        resp = make_response("The ID, name, status can not be None!", 400)
+    if not id:
+        logger.error("Error Update Task! ID can not be None!")
+        resp = make_response("The ID can not be None!", 400)
+    elif not name and not status:
+        logger.error("Error Update Task! name and status can not be both None!")
+        resp = make_response("The name and status can not be both None!", 400)
     elif not query_db('select * from Table1 where id = ?;', args=[id], one=True):
         logger.error("Error Update Task ID[%s]" % (id,))
         resp = make_response("The ID[%s] is not Exist!" % id, 400)
     else:
         try:
-            if status not in [0, 1]:
+            if status not in [None, 0, 1]:
                 raise ValueError
             update_db(id, name, status)
         except ValueError:
