@@ -2,6 +2,7 @@ import os
 import logging
 import sqlite3
 import json
+from sqlite3.dbapi2 import OperationalError
 from flask import Flask, jsonify, g, request, make_response
 from distutils.util import strtobool
 
@@ -9,14 +10,19 @@ app = Flask(__name__)
 logging.basicConfig(filename=os.getenv('FLASK_LOG', 'data/log/flask.log'), level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-DATABASE = os.getenv('DATABASE', 'data/db/test.db')
-
 #======DB Start
 def get_db():
+    DATABASE = os.getenv('DATABASE', 'data/db/test.db')
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
     return db
+
+def init_db():
+    db = get_db()
+    with app.open_resource('schema.sql') as f:
+        db.execute(f.read().decode('utf8'))
+    logger.info("SUCCESS create DB!")
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -146,4 +152,9 @@ def hello():
     return "Hello World!"
 
 if __name__ == "__main__":
-    app.run(debug=strtobool(os.getenv('FLASK_DEBUG', True)), host='0.0.0.0', port=8888)
+    with app.app_context():
+        try:
+            init_db()
+        except OperationalError as e:
+            logger.warning(e)
+    app.run(debug=strtobool(os.getenv('FLASK_DEBUG', 'True')), host='0.0.0.0', port=8888)

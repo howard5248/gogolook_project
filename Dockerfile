@@ -15,4 +15,4 @@ RUN pip install -r requirements.txt
 COPY *.py /code/
 COPY docker-entrypoint.sh /code/
 
-ENTRYPOINT [ "/bin/bash", "docker-entrypoint.sh" ]
+CMD ["python", "app.py"]

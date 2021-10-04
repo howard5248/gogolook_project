@@ -9,6 +9,6 @@ services:
       - ./data/log:/code/data/log
       - ./data/db:/code/data/db
     environment:
-      - FLASK_LOG=/code/data/log/flask1.log
+      - FLASK_LOG=/code/data/log/flask.log
       - FLASK_DEBUG=True
-      - DATABASE=/code/data/db/test.db
+      - DATABASE=/code/data/db/DB.db
